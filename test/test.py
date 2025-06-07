@@ -8,8 +8,14 @@ def main():
 
     while inflate_stream.has_next_frame():
         frame = inflate_stream.read_frame()
-        print(f"Frame: {frame.width}x{frame.height}")
 
+        for row in range(frame.height):
+            for col in range(frame.width):
+                cell = frame.get_cell(col, row)
+                c = chr(cell.codepoint)
+                print(c, end='')
+            print()
+        print("-")
 
 if __name__ == "__main__":
     main()
