@@ -164,7 +164,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
 
     // byte_input_stream class
     py::class_<byte_input_stream>(m, "ByteInputStream")
-        .def(py::init<const std::vector<uint8_t>&>())
+        .def(py::init<const std::vector<uint8_t>>())
         .def("read_byte", &byte_input_stream::readByte)
         .def("read_int16", &byte_input_stream::readInt16)
         .def("read_int32", &byte_input_stream::readInt32)
@@ -194,7 +194,8 @@ PYBIND11_MODULE(pytermstreamxz, m) {
             }
             delete[] raw_frame.cells;
             return wrapper;
-        });
+        })
+        .def("has_next_frame", &TermInflateStream::hasNextFrame);
 
     // Frame type constants
     m.attr("I_FRAME_WITH_FRAME_SIZE_TYPE") = I_FRAME_WITH_FRAME_SIZE_TYPE;
