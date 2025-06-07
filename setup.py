@@ -4,9 +4,7 @@ import subprocess
 import re
 from pathlib import Path
 
-from pybind11.setup_helpers import Pybind11Extension, build_ext
-from pybind11 import get_cmake_dir
-import pybind11
+from pybind11.setup_helpers import build_ext
 
 from setuptools import setup, Extension
 
@@ -50,6 +48,7 @@ class CMakeBuild(build_ext):
             # 3.15+.
             if not cmake_generator or cmake_generator == "Ninja":
                 try:
+                    # noinspection PyPackageRequirements
                     import ninja  # noqa: F401
 
                     ninja_executable_path = Path(ninja.BIN_DIR) / "ninja"
@@ -107,18 +106,8 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
         )
 
-
-# The main interface is through Pybind11Extension.
-# * You can add cxx_std=14/17/20, and then build_ext can be removed.
-# * You can set include_pybind11=false to add the include directory yourself,
-#   say from a submodule.
-#
-# Note:
-#   Sort input source files if you glob sources to ensure bit-for-bit
-#   reproducible builds (https://github.com/pybind/python_example/pull/53)
-
 ext_modules = [
-    CMakeExtension("pytermxz"),
+    CMakeExtension("pytermstreamxz"),
 ]
 
 setup(
@@ -126,4 +115,4 @@ setup(
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     python_requires=">=3.8",
-) 
+)
