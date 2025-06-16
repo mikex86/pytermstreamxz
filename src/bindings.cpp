@@ -2,8 +2,8 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 #include <pybind11/buffer_info.h>
-#include <termstream.h>
-#include <bytestream.h>
+#include <termstreamxz/termstream.h>
+#include <termstreamxz/bytestream.h>
 
 namespace py = pybind11;
 
@@ -177,9 +177,8 @@ PYBIND11_MODULE(pytermstreamxz, m) {
         .def(py::init<>())
         .def("write_frame", [](TermDeflateStream& stream, TerminalFrameWrapper& wrapper) {
             stream.writeFrame(wrapper.getFrame());
-        })
-        .def("get_out_stream", &TermDeflateStream::getOutStream,
-             py::return_value_policy::reference_internal);
+            // frame is managed by TermDeflateStream, no need to delete it here
+        });
 
     // TermInflateStream class
     py::class_<TermInflateStream>(m, "TermInflateStream")
@@ -192,7 +191,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
                     wrapper.getFrame().cells[i] = raw_frame.cells[i];
                 }
             }
-            delete[] raw_frame.cells;
+            // frame is managed by TermInflateStream, no need to delete it here
             return wrapper;
         })
         .def("has_next_frame", &TermInflateStream::hasNextFrame);

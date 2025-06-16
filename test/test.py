@@ -1,7 +1,7 @@
 from pytermstreamxz import TermInflateStream, ByteInputStream
 
 def main():
-    with open("repository.texz", "rb") as file:
+    with open("recording.texz", "rb") as file:
         bytes_list = file.read()
     byte_stream = ByteInputStream(list(bytes_list))
     inflate_stream = TermInflateStream(byte_stream)
