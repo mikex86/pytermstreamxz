@@ -175,7 +175,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
     // TermDeflateStream class
     py::class_<TermDeflateStream>(m, "TermDeflateStream")
         .def(py::init<>())
-        .def(py::init<std::unique_ptr<output_stream_base>>())
+        .def(py::init<std::string>())
         .def("write_frame", [](TermDeflateStream& stream, TerminalFrameWrapper &wrapper) {
             TerminalFrame raw_frame{
                 .width = wrapper.getWidth(),
