@@ -175,8 +175,19 @@ PYBIND11_MODULE(pytermstreamxz, m) {
     // TermDeflateStream class
     py::class_<TermDeflateStream>(m, "TermDeflateStream")
         .def(py::init<>())
-        .def("write_frame", [](TermDeflateStream& stream, TerminalFrameWrapper wrapper) {
-            stream.writeFrame(wrapper.getFrame());
+        .def("write_frame", [](TermDeflateStream& stream, TerminalFrameWrapper &wrapper) {
+            TerminalFrame raw_frame{
+                .width = wrapper.getWidth(),
+                .height = wrapper.getHeight(),
+                .cells = nullptr
+            };
+            if (raw_frame.width > 0 && raw_frame.height > 0) {
+                raw_frame.cells = new Cell[raw_frame.width * raw_frame.height];
+                for (int i = 0; i < raw_frame.width * raw_frame.height; ++i) {
+                    raw_frame.cells[i] = wrapper.getFrame().cells[i];
+                }
+            }
+            stream.writeFrame(raw_frame);
             // frame is managed by TermDeflateStream, no need to delete it here
         });
 
