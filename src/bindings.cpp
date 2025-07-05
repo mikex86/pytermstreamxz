@@ -175,7 +175,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
     // TermDeflateStream class
     py::class_<TermDeflateStream>(m, "TermDeflateStream")
         .def(py::init<>())
-        .def("write_frame", [](TermDeflateStream& stream, TerminalFrameWrapper& wrapper) {
+        .def("write_frame", [](TermDeflateStream& stream, TerminalFrameWrapper wrapper) {
             stream.writeFrame(wrapper.getFrame());
             // frame is managed by TermDeflateStream, no need to delete it here
         });
