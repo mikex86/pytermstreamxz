@@ -155,9 +155,9 @@ PYBIND11_MODULE(pytermstreamxz, m) {
     py::class_<byte_output_stream>(m, "ByteOutputStream")
         .def(py::init<>())
         .def("write_byte", &byte_output_stream::writeByte)
-        .def("write_int16", &byte_output_stream::writeInt16)
-        .def("write_int32", &byte_output_stream::writeInt32)
-        .def("write_int64", &byte_output_stream::writeInt64)
+        .def("write_int16", &byte_output_stream::writeUInt16)
+        .def("write_int32", &byte_output_stream::writeUInt32)
+        .def("write_int64", &byte_output_stream::writeUInt64)
         .def("write_bits", &byte_output_stream::writeBits)
         .def("get_buffer", &byte_output_stream::getBuffer, 
              py::return_value_policy::reference_internal);
@@ -166,9 +166,9 @@ PYBIND11_MODULE(pytermstreamxz, m) {
     py::class_<byte_input_stream>(m, "ByteInputStream")
         .def(py::init<const std::vector<uint8_t>>())
         .def("read_byte", &byte_input_stream::readByte)
-        .def("read_int16", &byte_input_stream::readInt16)
-        .def("read_int32", &byte_input_stream::readInt32)
-        .def("read_int64", &byte_input_stream::readInt64)
+        .def("read_int16", &byte_input_stream::readUInt16)
+        .def("read_int32", &byte_input_stream::readUInt32)
+        .def("read_int64", &byte_input_stream::readUInt64)
         .def("read_bits", &byte_input_stream::readBits)
         .def("has_more_data", &byte_input_stream::hasMoreData);
 
@@ -194,10 +194,12 @@ PYBIND11_MODULE(pytermstreamxz, m) {
             // frame is managed by TermInflateStream, no need to delete it here
             return wrapper;
         })
-        .def("has_next_frame", &TermInflateStream::hasNextFrame);
+        .def("has_next_frame", &TermInflateStream::hasNextFrame)
+        .def("seek", &TermInflateStream::seek)
+        .def("get_total_num_frames", &TermInflateStream::getTotalNumFrames);
 
     // Frame type constants
-    m.attr("I_FRAME_WITH_FRAME_SIZE_TYPE") = I_FRAME_WITH_FRAME_SIZE_TYPE;
+    m.attr("I_FRAME_GLOBAL") = I_FRAME_GLOBAL;
     m.attr("I_FRAME_NO_FRAME_SIZE_TYPE") = I_FRAME_NO_FRAME_SIZE_TYPE;
     m.attr("S_FRAME_TYPE") = S_FRAME_TYPE;
     m.attr("P_FRAME_TYPE") = P_FRAME_TYPE;
