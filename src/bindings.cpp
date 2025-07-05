@@ -175,6 +175,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
     // TermDeflateStream class
     py::class_<TermDeflateStream>(m, "TermDeflateStream")
         .def(py::init<>())
+        .def(py::init<byte_output_stream&>())
         .def("write_frame", [](TermDeflateStream& stream, TerminalFrameWrapper &wrapper) {
             TerminalFrame raw_frame{
                 .width = wrapper.getWidth(),
@@ -189,9 +190,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
             }
             stream.writeFrame(raw_frame);
             // frame is managed by TermDeflateStream, no need to delete it here
-        })
-        .def("get_output_stream", &TermDeflateStream::getOutputStream,
-             py::return_value_policy::reference_internal);
+        });
 
     // TermInflateStream class
     py::class_<TermInflateStream>(m, "TermInflateStream")
