@@ -172,6 +172,17 @@ PYBIND11_MODULE(pytermstreamxz, m) {
         .def("read_bits", &byte_input_stream::readBits)
         .def("has_more_data", &byte_input_stream::hasMoreData);
 
+    // file_input_stream class
+    py::class_<file_input_stream>(m, "FileInputStream")
+        .def(py::init<const std::string &>())
+        .def("read_byte", &file_input_stream::readByte)
+        .def("read_int16", &file_input_stream::readInt16)
+        .def("read_int32", &file_input_stream::readInt32)
+        .def("read_int64", &file_input_stream::readInt64)
+        .def("read_bits", &file_input_stream::readBits)
+        .def("has_more_data", &file_input_stream::hasMoreData)
+        .def("has_next_byte", &file_input_stream::hasNextByte);
+
     // TermDeflateStream class
     py::class_<TermDeflateStream>(m, "TermDeflateStream")
         .def(py::init<>())
