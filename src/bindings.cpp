@@ -110,6 +110,83 @@ public:
         }
     }
 
+    std::vector<uint32_t> readCodepoints() const {
+        std::vector<uint32_t> codepoints;
+        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
+            codepoints.reserve(frame.width * frame.height);
+            for (int i = 0; i < frame.width * frame.height; ++i) {
+                codepoints.push_back(frame.cells[i].codepoint);
+            }
+        }
+        return codepoints;
+    }
+
+    std::vector<uint8_t> readFgRedValues() const {
+        std::vector<uint8_t> fg_red_values;
+        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
+            fg_red_values.reserve(frame.width * frame.height);
+            for (int i = 0; i < frame.width * frame.height; ++i) {
+                fg_red_values.push_back(frame.cells[i].fg_r);
+            }
+        }
+        return fg_red_values;
+    }
+
+    std::vector<uint8_t> readFgGreenValues() const {
+        std::vector<uint8_t> fg_green_values;
+        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
+            fg_green_values.reserve(frame.width * frame.height);
+            for (int i = 0; i < frame.width * frame.height; ++i) {
+                fg_green_values.push_back(frame.cells[i].fg_g);
+            }
+        }
+        return fg_green_values;
+    }
+
+    std::vector<uint8_t> readFgBlueValues() const {
+        std::vector<uint8_t> fg_blue_values;
+        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
+            fg_blue_values.reserve(frame.width * frame.height);
+            for (int i = 0; i < frame.width * frame.height; ++i) {
+                fg_blue_values.push_back(frame.cells[i].fg_b);
+            }
+        }
+        return fg_blue_values;
+    }
+
+    std::vector<uint8_t> readBgRedValues() const {
+        std::vector<uint8_t> bg_red_values;
+        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
+            bg_red_values.reserve(frame.width * frame.height);
+            for (int i = 0; i < frame.width * frame.height; ++i) {
+                bg_red_values.push_back(frame.cells[i].bg_r);
+            }
+        }
+        return bg_red_values;
+    }
+
+    std::vector<uint8_t> readBgGreenValues() const {
+        std::vector<uint8_t> bg_green_values;
+        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
+            bg_green_values.reserve(frame.width * frame.height);
+            for (int i = 0; i < frame.width * frame.height; ++i) {
+                bg_green_values.push_back(frame.cells[i].bg_g);
+            }
+        }
+        return bg_green_values;
+    }
+
+    std::vector<uint8_t> readBgBlueValues() const {
+        std::vector<uint8_t> bg_blue_values;
+        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
+            bg_blue_values.reserve(frame.width * frame.height);
+            for (int i = 0; i < frame.width * frame.height; ++i) {
+                bg_blue_values.push_back(frame.cells[i].bg_b);
+            }
+        }
+        return bg_blue_values;
+    }
+
     const TerminalFrame& getFrame() const { return frame; }
     TerminalFrame& getFrame() { return frame; }
 };
@@ -149,7 +226,14 @@ PYBIND11_MODULE(pytermstreamxz, m) {
         .def_property("height", &TerminalFrameWrapper::getHeight, &TerminalFrameWrapper::setHeight)
         .def_property("cells", &TerminalFrameWrapper::getCells, &TerminalFrameWrapper::setCells)
         .def("get_cell", &TerminalFrameWrapper::getCell)
-        .def("set_cell", &TerminalFrameWrapper::setCell);
+        .def("set_cell", &TerminalFrameWrapper::setCell)
+        .def("read_codepoints", &TerminalFrameWrapper::readCodepoints)
+        .def("read_fg_red_values", &TerminalFrameWrapper::readFgRedValues)
+        .def("read_fg_green_values", &TerminalFrameWrapper::readFgGreenValues)
+        .def("read_fg_blue_values", &TerminalFrameWrapper::readFgBlueValues)
+        .def("read_bg_red_values", &TerminalFrameWrapper::readBgRedValues)
+        .def("read_bg_green_values", &TerminalFrameWrapper::readBgGreenValues)
+        .def("read_bg_blue_values", &TerminalFrameWrapper::readBgBlueValues);
 
     // byte_output_stream class
     py::class_<byte_output_stream>(m, "ByteOutputStream")
