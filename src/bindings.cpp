@@ -205,7 +205,8 @@ PYBIND11_MODULE(pytermstreamxz, m) {
 
     // TermInflateStream class
     py::class_<TermInflateStream>(m, "TermInflateStream")
-        .def(py::init<input_stream_base&>())
+        .def(py::init<file_input_stream&>())
+        .def(py::init<byte_input_stream&>())
         .def("read_frame", [](TermInflateStream& stream) -> TerminalFrameWrapper {
             TerminalFrame raw_frame = stream.readFrame();
             TerminalFrameWrapper wrapper(raw_frame.width, raw_frame.height);
