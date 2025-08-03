@@ -110,81 +110,44 @@ public:
         }
     }
 
-    std::vector<uint32_t> readCodepoints() const {
-        std::vector<uint32_t> codepoints;
-        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
-            codepoints.reserve(frame.width * frame.height);
-            for (int i = 0; i < frame.width * frame.height; ++i) {
-                codepoints.push_back(frame.cells[i].codepoint);
-            }
+    /// Copy out all of the per-cell components in one pass.
+    ///
+    /// @param codepoints_out   pointer to uint32_t[num_elements] or nullptr
+    /// @param fg_r_out         pointer to uint8_t[num_elements] or nullptr
+    /// @param fg_g_out         pointer to uint8_t[num_elements] or nullptr
+    /// @param fg_b_out         pointer to uint8_t[num_elements] or nullptr
+    /// @param bg_r_out         pointer to uint8_t[num_elements] or nullptr
+    /// @param bg_g_out         pointer to uint8_t[num_elements] or nullptr
+    /// @param bg_b_out         pointer to uint8_t[num_elements] or nullptr
+    /// @param num_elements     size of each output array (must be ≥ width*height)
+    void readComponents(
+        uint32_t  *codepoints_out,
+        uint8_t   *fg_r_out,
+        uint8_t   *fg_g_out,
+        uint8_t   *fg_b_out,
+        uint8_t   *bg_r_out,
+        uint8_t   *bg_g_out,
+        uint8_t   *bg_b_out,
+        size_t     num_elements
+    ) const {
+        size_t n = frame.width * frame.height;
+        if (!frame.cells || n == 0) {
+            // nothing to do, but still valid
+            return;
         }
-        return codepoints;
-    }
-
-    std::vector<uint8_t> readFgRedValues() const {
-        std::vector<uint8_t> fg_red_values;
-        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
-            fg_red_values.reserve(frame.width * frame.height);
-            for (int i = 0; i < frame.width * frame.height; ++i) {
-                fg_red_values.push_back(frame.cells[i].fg_r);
-            }
+        if (num_elements < n) {
+            throw std::runtime_error("Not enough space in output buffers");
         }
-        return fg_red_values;
-    }
-
-    std::vector<uint8_t> readFgGreenValues() const {
-        std::vector<uint8_t> fg_green_values;
-        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
-            fg_green_values.reserve(frame.width * frame.height);
-            for (int i = 0; i < frame.width * frame.height; ++i) {
-                fg_green_values.push_back(frame.cells[i].fg_g);
-            }
+        for (size_t i = 0; i < n; ++i) {
+            const Cell &c = frame.cells[i];
+            if (codepoints_out) codepoints_out[i] = c.codepoint;
+            if (fg_r_out)       fg_r_out[i]       = c.fg_r;
+            if (fg_g_out)       fg_g_out[i]       = c.fg_g;
+            if (fg_b_out)       fg_b_out[i]       = c.fg_b;
+            if (bg_r_out)       bg_r_out[i]       = c.bg_r;
+            if (bg_g_out)       bg_g_out[i]       = c.bg_g;
+            if (bg_b_out)       bg_b_out[i]       = c.bg_b;
         }
-        return fg_green_values;
-    }
-
-    std::vector<uint8_t> readFgBlueValues() const {
-        std::vector<uint8_t> fg_blue_values;
-        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
-            fg_blue_values.reserve(frame.width * frame.height);
-            for (int i = 0; i < frame.width * frame.height; ++i) {
-                fg_blue_values.push_back(frame.cells[i].fg_b);
-            }
-        }
-        return fg_blue_values;
-    }
-
-    std::vector<uint8_t> readBgRedValues() const {
-        std::vector<uint8_t> bg_red_values;
-        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
-            bg_red_values.reserve(frame.width * frame.height);
-            for (int i = 0; i < frame.width * frame.height; ++i) {
-                bg_red_values.push_back(frame.cells[i].bg_r);
-            }
-        }
-        return bg_red_values;
-    }
-
-    std::vector<uint8_t> readBgGreenValues() const {
-        std::vector<uint8_t> bg_green_values;
-        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
-            bg_green_values.reserve(frame.width * frame.height);
-            for (int i = 0; i < frame.width * frame.height; ++i) {
-                bg_green_values.push_back(frame.cells[i].bg_g);
-            }
-        }
-        return bg_green_values;
-    }
-
-    std::vector<uint8_t> readBgBlueValues() const {
-        std::vector<uint8_t> bg_blue_values;
-        if (frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
-            bg_blue_values.reserve(frame.width * frame.height);
-            for (int i = 0; i < frame.width * frame.height; ++i) {
-                bg_blue_values.push_back(frame.cells[i].bg_b);
-            }
-        }
-        return bg_blue_values;
     }
 
     const TerminalFrame& getFrame() const { return frame; }
@@ -227,13 +190,36 @@ PYBIND11_MODULE(pytermstreamxz, m) {
         .def_property("cells", &TerminalFrameWrapper::getCells, &TerminalFrameWrapper::setCells)
         .def("get_cell", &TerminalFrameWrapper::getCell)
         .def("set_cell", &TerminalFrameWrapper::setCell)
-        .def("read_codepoints", &TerminalFrameWrapper::readCodepoints)
-        .def("read_fg_red_values", &TerminalFrameWrapper::readFgRedValues)
-        .def("read_fg_green_values", &TerminalFrameWrapper::readFgGreenValues)
-        .def("read_fg_blue_values", &TerminalFrameWrapper::readFgBlueValues)
-        .def("read_bg_red_values", &TerminalFrameWrapper::readBgRedValues)
-        .def("read_bg_green_values", &TerminalFrameWrapper::readBgGreenValues)
-        .def("read_bg_blue_values", &TerminalFrameWrapper::readBgBlueValues);
+        .def("read_components",
+            [](TerminalFrameWrapper &self,
+               uintptr_t codepoints_out,
+               uintptr_t fg_r_out,
+               uintptr_t fg_g_out,
+               uintptr_t fg_b_out,
+               uintptr_t bg_r_out,
+               uintptr_t bg_g_out,
+               uintptr_t bg_b_out,
+               size_t    num_elements
+            ) {
+                auto cp = reinterpret_cast<uint32_t*>(codepoints_out);
+                auto fr = reinterpret_cast<uint8_t* >(fg_r_out);
+                auto fg = reinterpret_cast<uint8_t* >(fg_g_out);
+                auto fb = reinterpret_cast<uint8_t* >(fg_b_out);
+                auto br = reinterpret_cast<uint8_t* >(bg_r_out);
+                auto bg = reinterpret_cast<uint8_t* >(bg_g_out);
+                auto bb = reinterpret_cast<uint8_t* >(bg_b_out);
+
+                self.readComponents(cp, fr, fg, fb, br, bg, bb, num_elements);
+            },
+            py::arg("codepoints_out"),
+            py::arg("fg_r_out"),
+            py::arg("fg_g_out"),
+            py::arg("fg_b_out"),
+            py::arg("bg_r_out"),
+            py::arg("bg_g_out"),
+            py::arg("bg_b_out"),
+            py::arg("num_elements")
+        );
 
     // byte_output_stream class
     py::class_<byte_output_stream>(m, "ByteOutputStream")
