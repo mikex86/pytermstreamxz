@@ -97,15 +97,7 @@ public:
         return cells_vector;
     }
 
-    std::vector<uint32_t> getUserData() const {
-        std::vector<uint32_t> user_data{};
-        const auto &frame_user_data = frame.meta_data.user_data;
-        user_data.reserve(frame_user_data.size());
-        for (const auto &u : frame_user_data) {
-            user_data.push_back(u);
-        }
-        return user_data;
-    }
+    std::vector<uint8_t> getUserData() const { return frame.meta_data.user_data; }
 
     void setCells(const std::vector<Cell>& cells) {
         if (frame.cells != nullptr) {
@@ -198,7 +190,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
         .def_property("width", &TerminalFrameWrapper::getWidth, &TerminalFrameWrapper::setWidth)
         .def_property("height", &TerminalFrameWrapper::getHeight, &TerminalFrameWrapper::setHeight)
         .def_property("cells", &TerminalFrameWrapper::getCells, &TerminalFrameWrapper::setCells)
-        .def("user_data", &TerminalFrameWrapper::getUserData)
+        .def("get_user_data", &TerminalFrameWrapper::getMetaData)
         .def("get_cell", &TerminalFrameWrapper::getCell)
         .def("set_cell", &TerminalFrameWrapper::setCell)
         .def("read_components",
