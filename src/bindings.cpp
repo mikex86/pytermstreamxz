@@ -97,6 +97,8 @@ public:
         return cells_vector;
     }
 
+    std::vector<uint8_t> getUserData() const { return frame.meta_data.user_data; }
+
     void setCells(const std::vector<Cell>& cells) {
         if (frame.cells != nullptr) {
             delete[] frame.cells;
@@ -188,6 +190,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
         .def_property("width", &TerminalFrameWrapper::getWidth, &TerminalFrameWrapper::setWidth)
         .def_property("height", &TerminalFrameWrapper::getHeight, &TerminalFrameWrapper::setHeight)
         .def_property("cells", &TerminalFrameWrapper::getCells, &TerminalFrameWrapper::setCells)
+        .def("user_data", &TerminalFrameWrapper::getUserData)
         .def("get_cell", &TerminalFrameWrapper::getCell)
         .def("set_cell", &TerminalFrameWrapper::setCell)
         .def("read_components",

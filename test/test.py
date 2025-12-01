@@ -2,7 +2,7 @@ from pytermstreamxz import TermInflateStream, ByteInputStream
 import numpy as np
 
 def main():
-    with open("recording1.texz", "rb") as file:
+    with open("recording1bit-CPU-2.texz", "rb") as file:
         bytes_list = file.read()
     byte_stream = ByteInputStream(list(bytes_list))
     inflate_stream = TermInflateStream(byte_stream)
