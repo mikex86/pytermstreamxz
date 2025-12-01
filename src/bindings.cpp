@@ -97,7 +97,15 @@ public:
         return cells_vector;
     }
 
-    std::vector<uint8_t> getUserData() const { return frame.meta_data.user_data; }
+    std::vector<uint32_t> getUserData() const {
+        std::vector<uint32_t> user_data_vector{};
+        const auto &frame_user_data = frame.meta_data.user_data;
+        user_data_vector.reserve(frame_user_data.size());
+        for (const auto &u : frame_user_data) {
+            user_data_vector.push_back(u);
+        }
+        return user_data_vector;
+    }
 
     void setCells(const std::vector<Cell>& cells) {
         if (frame.cells != nullptr) {
