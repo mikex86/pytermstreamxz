@@ -31,6 +31,7 @@ public:
     TerminalFrameWrapper(const TerminalFrameWrapper& other) {
         frame.width = other.frame.width;
         frame.height = other.frame.height;
+        frame.meta_data = other.frame.meta_data;
         if (other.frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
             frame.cells = new Cell[frame.width * frame.height];
             for (int i = 0; i < frame.width * frame.height; ++i) {
@@ -49,6 +50,7 @@ public:
             
             frame.width = other.frame.width;
             frame.height = other.frame.height;
+            frame.meta_data = other.frame.meta_data;
             if (other.frame.cells != nullptr && frame.width > 0 && frame.height > 0) {
                 frame.cells = new Cell[frame.width * frame.height];
                 for (int i = 0; i < frame.width * frame.height; ++i) {
@@ -97,15 +99,7 @@ public:
         return cells_vector;
     }
 
-    std::vector<uint32_t> getUserData() const {
-        std::vector<uint32_t> user_data_vector{};
-        const auto &frame_user_data = frame.meta_data.user_data;
-        user_data_vector.reserve(frame_user_data.size());
-        for (const auto &u : frame_user_data) {
-            user_data_vector.push_back(u);
-        }
-        return user_data_vector;
-    }
+    std::vector<uint8_t> getUserData() const { return frame.meta_data.user_data; }
 
     void setCells(const std::vector<Cell>& cells) {
         if (frame.cells != nullptr) {
@@ -296,6 +290,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
                     wrapper.getFrame().cells[i] = raw_frame.cells[i];
                 }
             }
+            wrapper.getFrame().meta_data = raw_frame.meta_data;
             // frame is managed by TermInflateStream, no need to delete it here
             return wrapper;
         })
