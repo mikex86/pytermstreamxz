@@ -190,7 +190,7 @@ PYBIND11_MODULE(pytermstreamxz, m) {
         .def_property("width", &TerminalFrameWrapper::getWidth, &TerminalFrameWrapper::setWidth)
         .def_property("height", &TerminalFrameWrapper::getHeight, &TerminalFrameWrapper::setHeight)
         .def_property("cells", &TerminalFrameWrapper::getCells, &TerminalFrameWrapper::setCells)
-        .def("get_user_data", &TerminalFrameWrapper::getMetaData)
+        .def("get_user_data", &TerminalFrameWrapper::getUserData)
         .def("get_cell", &TerminalFrameWrapper::getCell)
         .def("set_cell", &TerminalFrameWrapper::setCell)
         .def("read_components",
