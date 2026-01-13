@@ -296,7 +296,8 @@ PYBIND11_MODULE(pytermstreamxz, m) {
         })
         .def("has_next_frame", &TermInflateStream::hasNextFrame)
         .def("seek", &TermInflateStream::seek)
-        .def("get_total_num_frames", &TermInflateStream::getTotalNumFrames);
+        .def("get_total_num_frames", &TermInflateStream::getTotalNumFrames)
+        .def("get_last_frame_index", &TermInflateStream::getLastFrameIndex);
 
     // Frame type constants
     m.attr("I_FRAME_GLOBAL") = I_FRAME_GLOBAL;

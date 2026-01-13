@@ -1,12 +1,10 @@
-from pytermstreamxz import TermInflateStream, ByteInputStream
+from pytermstreamxz import TermInflateStream, FileInputStream
 import numpy as np
 
 def main():
-    with open("recording1bit-CPU-2.texz", "rb") as file:
-        bytes_list = file.read()
-    byte_stream = ByteInputStream(list(bytes_list))
+    byte_stream = FileInputStream("recordingllm-0.texz")
     inflate_stream = TermInflateStream(byte_stream)
-    inflate_stream.seek(1025)
+    # inflate_stream.seek(1025)
     for _ in range(65536):
         frame = inflate_stream.read_frame()
 
@@ -43,6 +41,7 @@ def main():
                 print(chr(codepoint), end="")
             print()
         print("\n" + "=" * 40 + "\n")
+        print("frame_index:", inflate_stream.get_last_frame_index())
 
 
 if __name__ == "__main__":
